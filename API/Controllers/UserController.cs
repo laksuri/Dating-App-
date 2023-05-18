@@ -9,10 +9,12 @@ using API.Entities;
 using API.Data;
 using System.Runtime.Intrinsics.X86;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
     [ApiController]
+    [Authorize]
     //[Route("[controller]")]
     public class UserController : ControllerBase
     {
@@ -22,6 +24,7 @@ namespace API.Controllers
         {
             _context=context;
         }
+        [AllowAnonymous]
         [HttpGet("user/getusers")]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         {
@@ -33,6 +36,7 @@ namespace API.Controllers
         public async Task<ActionResult<AppUser>> GetUserById(int id)
         {
             var users = await _context.Users.FindAsync(id);
+            if(users==null){ return NotFound("No user exists for the given id");}
 
             return users;
         }
